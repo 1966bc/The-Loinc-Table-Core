@@ -1,5 +1,7 @@
 # The-Loinc-Table-Core
 
+![alt tag](https://user-images.githubusercontent.com/5463566/182130707-63e5d934-5a3b-4b26-81d3-15e8404206cd.png)
+
 "This material contains content from LOINC (http://loinc.org). LOINC is copyright © 1995-2022, Regenstrief Institute, 
 
 Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under 

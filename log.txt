@@ -1,0 +1,12 @@
+2022-08-01 12:15:14.532266
+read
+no such table: core
+<class 'sqlite3.OperationalError'>
+<module 'dbms' from '/home/bc/Documents/loinc/dbms.py'>
+
+2022-08-01 12:15:32.757431
+read
+no such table: core
+<class 'sqlite3.OperationalError'>
+<module 'dbms' from '/home/bc/Documents/loinc/dbms.py'>
+

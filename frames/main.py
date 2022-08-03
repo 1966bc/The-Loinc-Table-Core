@@ -42,7 +42,7 @@ class Main(ttk.Frame):
         self.ops = ("Laboratory", "Clinical", "Claims attachments", "Surveys")
         self.option_id = tk.IntVar()
         self.type_id = tk.IntVar()
-        self.code = tk.StringVar()
+        self.search = tk.StringVar()
         self.status_bar_text = tk.StringVar()
         self.init_menu()
         self.init_toolbar()
@@ -142,18 +142,17 @@ class Main(ttk.Frame):
 
         ttk.Label(f2, text="Search:", anchor=tk.W).pack(fill=tk.X)
 
-        self.txtSearch = ttk.Entry(f2, textvariable=self.code)
+        self.txtSearch = ttk.Entry(f2, textvariable=self.search)
         self.txtSearch.bind("<Return>", self.on_search)
         self.txtSearch.bind("<KP_Enter>", self.on_search)
         self.txtSearch.pack(fill=tk.X,) 
         
-        cols = (["#0", "Number", "w", True, 50, 50],
+        cols = (["#0", "Number", "w", True, 80, 80],
                 ["#1", "Component", "w", True, 300, 300],
-                ["#2", "Short Name", "w", True, 100, 100],
-                ["#3", "System", "w", True, 50, 50],
-                ["#4", "Property", "w", True, 50, 50],
-                ["#5", "Class", "w", True, 50, 50],
-                ["#6", "Status", "w", True, 50, 50],)
+                ["#2", "System", "w", True, 100, 100],
+                ["#3", "Property", "w", True, 50, 50],
+                ["#4", "Class", "w", True, 50, 50],
+                ["#5", "Status", "w", True, 50, 50],)
 
         self.lblItems = ttk.LabelFrame(f2, text="Items",)
         self.lstItems = self.master.engine.get_tree(self.lblItems, cols,)
@@ -183,7 +182,7 @@ class Main(ttk.Frame):
 
         self.master.engine.get_radio_buttons(f3,
                                              "Search type",
-                                             ("Component", "Code", "Short Name"),
+                                             ("Component", "Number",),
                                              self.type_id,
                                              self.set_classes).pack(padx=5, pady=5, fill=tk.BOTH)
 
@@ -223,13 +222,17 @@ class Main(ttk.Frame):
 
         self.set_classes()
 
+        self.clear_items()
+
+        self.search.set("")
+
         self.txtSearch.focus()
 
     def on_search(self, evt=None):
 
         fields = ("[COMPONENT]", "[LOINC_NUM]", "[SHORTNAME]")
 
-        sql = "SELECT [LOINC_NUM],[COMPONENT],[SHORTNAME],\
+        sql = "SELECT [LOINC_NUM],[COMPONENT],\
                       [SYSTEM],[PROPERTY],[CLASS],[STATUS]\
                FROM  LoincTableCore WHERE {0}\
                LIKE ?\
@@ -242,7 +245,7 @@ class Main(ttk.Frame):
 
     def get_values(self,):
 
-        return [self.code.get(),]
+        return [self.search.get(),]
 
     def get_sql_args(self):
 
@@ -274,7 +277,7 @@ class Main(ttk.Frame):
 
     def on_class_selected(self, evt=None):
 
-        sql = "SELECT [LOINC_NUM],[COMPONENT],[SHORTNAME],\
+        sql = "SELECT [LOINC_NUM],[COMPONENT],\
                       [SYSTEM],[PROPERTY],[CLASS],[STATUS]\
                FROM LoincTableCore\
                WHERE [CLASS] =?\
@@ -297,13 +300,16 @@ class Main(ttk.Frame):
             messagebox.showwarning(self.master.title(),
                                    self.master.engine.no_selected,
                                    parent=self)
+    def clear_items(self):
+
+        for i in self.lstItems.get_children():
+            self.lstItems.delete(i)
 
     def set_items(self, sql, args):
 
         self.master.engine.busy(self)
 
-        for i in self.lstItems.get_children():
-            self.lstItems.delete(i)
+        self.clear_items()
 
         rs = self.master.engine.read(True, sql, args)
 
@@ -311,10 +317,10 @@ class Main(ttk.Frame):
 
             for i in rs:
 
-                tag_config = (i[6])
+                tag_config = (i[5])
 
                 self.lstItems.insert("", tk.END, iid=i[0], text=i[0],
-                                     values=(i[1], i[2], i[3], i[4], i[5], i[6]),
+                                     values=(i[1], i[2], i[3], i[4], i[5],),
                                      tags=tag_config)
 
         s = "{0} {1}".format("Items", len(self.lstItems.get_children()))
@@ -360,7 +366,7 @@ class Main(ttk.Frame):
 
                 p = self.master.engine.get_table_core(selected_file)
 
-                s = ('Exit status code:{0}'.format(p))
+                s = ("Exit status code:{0}\.It's OK.".format(p))
 
                 self.master.engine.not_busy(self)
 

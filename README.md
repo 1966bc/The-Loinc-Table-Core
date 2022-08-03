@@ -32,6 +32,8 @@ You can even edit or insert single record make double click on a class voice to 
 
 make double click on a item voice tp update an existing record.
 
+![alt tag](https://user-images.githubusercontent.com/5463566/182587177-cc5e433d-2559-41ff-819b-15f27358c3b0.png)
+
 To run the project, execute loinc.py
 
 Make sure you have the right files rights.

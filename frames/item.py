@@ -40,11 +40,11 @@ class UI(tk.Toplevel):
 
     def set_style(self):
         s = ttk.Style()
-       
+
         s.configure("Mandatory.TLabel",
-                    foreground=self.nametowidget(".").engine.get_rgb(0, 0, 255),
-                    background=self.nametowidget(".").engine.get_rgb(255, 255, 255))
-        
+                    foreground=self.master.engine.get_rgb(0, 0, 255),
+                    background=self.master.engine.get_rgb(255, 255, 255))
+
     def init_ui(self):
 
         w = self.master.engine.get_init_ui(self)
@@ -54,16 +54,16 @@ class UI(tk.Toplevel):
         ttk.Label(w, style="Mandatory.TLabel", text="Loinc Num:",).grid(row=r, sticky=tk.W)
         self.txtLoinc = ttk.Entry(w, textvariable=self.loinc_num)
         self.txtLoinc.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
-        
+
         r += 1
         ttk.Label(w, style="Mandatory.TLabel", text="Component:",).grid(row=r, sticky=tk.W)
         self.txtComponent = ttk.Entry(w, textvariable=self.component)
         self.txtComponent.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
-        
+
         r += 1
         ttk.Label(w, text="Property:",).grid(row=r, sticky=tk.W)
-        ttk.Entry(w,  justify=tk.CENTER, width=8, textvariable=self.property).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
-        
+        ttk.Entry(w, justify=tk.CENTER, width=8, textvariable=self.property).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
+
         r += 1
         ttk.Label(w, text="Time Aspct:",).grid(row=r, sticky=tk.W)
         ttk.Entry(w, width=8, textvariable=self.time_aspct).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
@@ -123,7 +123,7 @@ class UI(tk.Toplevel):
         if self.index is not None:
             self.selected_item = selected_item
             msg = "Edit {0}".format(self.winfo_name().capitalize())
-            self.txtLoinc.config(state= "disabled")
+            self.txtLoinc.config(state="disabled")
             self.set_values()
             self.txtComponent.focus()
         else:
@@ -133,7 +133,7 @@ class UI(tk.Toplevel):
 
         self.title(msg)
 
-   
+
     def set_values(self,):
 
         self.loinc_num.set(self.selected_item[0])
@@ -188,14 +188,14 @@ class UI(tk.Toplevel):
 
             else:
 
-                args.insert(0,self.loinc_num.get())
+                args.insert(0, self.loinc_num.get())
 
                 sql = "INSERT INTO LoincTableCore VALUES({0});".format(",".join("?"*(len(args))))
-           
+
             last_id = self.master.engine.write(sql, args)
 
             self.parent.on_class_selected()
-            
+
             if self.index is not None:
                 self.parent.lstItems.selection_set(self.index)
                 self.parent.lstItems.see(self.index)
@@ -214,27 +214,27 @@ class UI(tk.Toplevel):
 
         sql = "SELECT LOINC_NUM, COMPONENT FROM LoincTableCore WHERE LOINC_NUM = ?"
 
-        rs = self.nametowidget(".").engine.read(False, sql, (self.loinc_num.get(),))
+        rs = self.master.engine.read(False, sql, (self.loinc_num.get(),))
 
         if rs:
 
             if self.index is not None:
-                 if rs[0] != self.selected_item[0]:
+                if rs[0] != self.selected_item[0]:
                     msg = "LOINC Code {0} has already been assigned!".format(self.loinc_num.get(),)
-                    messagebox.showwarning(self.nametowidget(".").title(), msg, parent=self)
+                    messagebox.showwarning(self.master.title(), msg, parent=self)
                     return 0
             else:
                 msg = "LOINC code {0} has already been assigned!".format(self.loinc_num.get(),)
-                messagebox.showwarning(self.nametowidget(".").title(), msg, parent=self)
+                messagebox.showwarning(self.master.title(), msg, parent=self)
                 return 0
 
     def on_fields_control(self):
-        
+
         dict_fields = {self.txtLoinc:"Loinc Num",
                        self.txtComponent:"Component",
                        self.txtClass:"Class",
                        self.txtShortName:"Short Name"}
-        
+
         for k, v in dict_fields.items():
             if not k.get():
                 msg = "The {0} field is mandatory".format(dict_fields[k])

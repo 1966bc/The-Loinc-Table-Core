@@ -26,7 +26,7 @@ __maintainer__ = "1966bc"
 __email__ = "giuseppecostanzi@gmail.com"
 __date__ = "Aestas MMXXI"
 __status__ = "production"
-__icon__ = "https://icon-library.com/icon/database-icon-0.html.html>Database Icon # 95886"
+__icon__ = "LOINC® logo"
 
 
 class Main(ttk.Frame):
@@ -55,7 +55,7 @@ class Main(ttk.Frame):
         m_main = tk.Menu(self, bd=1)
 
         m_file = tk.Menu(m_main, tearoff=0, bd=1)
-        
+
         s_databases = tk.Menu(m_file)
         m_about = tk.Menu(m_main, tearoff=0, bd=1)
 
@@ -131,8 +131,6 @@ class Main(ttk.Frame):
         self.pack(fill=tk.BOTH, expand=1)
 
         f0 = self.master.engine.get_frame(self, 8)
-
-        #f1 = ttk.Frame(f0,)
         f1 = ttk.LabelFrame(f0, text="Classes",)
         # lstClass
         self.lstClasses = self.master.engine.get_listbox(f1,)
@@ -141,8 +139,7 @@ class Main(ttk.Frame):
         f1.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=0)
 
         f2 = ttk.Frame(f0,)
-        #tracks
-        #-----------------------------------------------------------------------
+        
         cols = (["#0", "Number", "w", True, 50, 50],
                 ["#1", "Component", "w", True, 300, 300],
                 ["#2", "Short Name", "w", True, 100, 100],
@@ -161,7 +158,7 @@ class Main(ttk.Frame):
 
         f2.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=1)
 
-        f3 = self.nametowidget(".").engine.get_frame(f0, )
+        f3 = self.master.engine.get_frame(f0, )
 
         ttk.Label(f3, text="Search:", anchor=tk.W).pack(fill=tk.X)
 
@@ -170,32 +167,30 @@ class Main(ttk.Frame):
         self.txtSearch.bind("<KP_Enter>", self.on_search)
         self.txtSearch.pack(fill=tk.X)
 
-        #("WhoIsSel", 0, self.on_who_is_select, "<Alt-w>"),
         bts = [("Search", 0, self.on_search, "<Alt-s>"),
                ("Reset", 0, self.on_reset, "<Alt-r>"),
-               #("Print Request", 1, self.on_print, "<Alt-p>"),
                ("Close", 0, self.parent.on_exit, "<Alt-c>")]
 
         for btn in bts:
-            self.nametowidget(".").engine.get_button(f3, btn[0], btn[1]).bind("<Button-1>", btn[2])
+            self.master.engine.get_button(f3, btn[0], btn[1]).bind("<Button-1>", btn[2])
             self.bind(btn[3], btn[2])
 
-        self.nametowidget(".").engine.get_radio_buttons(f3,
-                                      "Classes",
-                                      self.ops,
-                                      self.option_id,
-                                      self.set_classes).pack(padx=5, pady=5, fill=tk.BOTH)
+        self.master.engine.get_radio_buttons(f3,
+                                             "Classes",
+                                             self.ops,
+                                             self.option_id,
+                                             self.set_classes).pack(padx=5, pady=5, fill=tk.BOTH)
 
-        self.nametowidget(".").engine.get_radio_buttons(f3,
-                                      "Search type",
-                                      ("Component", "Code", "Short Name"),
-                                      self.type_id,
-                                      self.set_classes).pack(padx=5, pady=5, fill=tk.BOTH)
-        
+        self.master.engine.get_radio_buttons(f3,
+                                             "Search type",
+                                             ("Component", "Code", "Short Name"),
+                                             self.type_id,
+                                             self.set_classes).pack(padx=5, pady=5, fill=tk.BOTH)
 
-        f3.pack(side=tk.RIGHT, fill=tk.Y, padx=5, pady=5, expand=0)            
 
-      
+        f3.pack(side=tk.RIGHT, fill=tk.Y, padx=5, pady=5, expand=0)
+
+
         f0.pack(fill=tk.BOTH, expand=1, padx=5, pady=5)
 
     def center_ui(self):
@@ -210,11 +205,10 @@ class Main(ttk.Frame):
         y = (hs/2) - (h/2)
         self.master.geometry("%dx%d+%d+%d" % (w, h, x, y))
 
-
     def on_open(self, evt=None):
 
         self.on_reset()
-        
+
     def on_reset(self, evt=None):
 
         sql = "SELECT COUNT(*) FROM LoincTableCore;"
@@ -229,23 +223,27 @@ class Main(ttk.Frame):
 
         self.set_classes()
 
-        self.txtSearch.focus()        
+        self.txtSearch.focus()
 
     def on_search(self, evt=None):
 
         fields = ("[COMPONENT]", "[LOINC_NUM]", "[SHORTNAME]")
 
-        sql = "SELECT [LOINC_NUM], [COMPONENT], [SHORTNAME], [SYSTEM], [PROPERTY], [CLASS], [STATUS] FROM  LoincTableCore WHERE {0} LIKE ? ORDER BY [COMPONENT] ASC;".format(fields[self.type_id.get()])
-                                                                                                                                                             
+        sql = "SELECT [LOINC_NUM],[COMPONENT],[SHORTNAME],\
+                      [SYSTEM],[PROPERTY],[CLASS],[STATUS]\
+               FROM  LoincTableCore WHERE {0}\
+               LIKE ?\
+               ORDER BY [COMPONENT] ASC;".format(fields[self.type_id.get()])
+
         args = tuple(self.get_sql_args())
 
         self.set_codes(sql, args)
 
-        
+
     def get_values(self,):
 
         return [self.code.get(),]
-    
+
     def get_sql_args(self):
 
         args = self.get_values()
@@ -256,24 +254,31 @@ class Main(ttk.Frame):
             else:
                 args[n] = args[n]+"%"
 
-        return args                
+        return args
 
     def set_classes(self,):
 
-        sql = "SELECT [CLASS] FROM LoincTableCore WHERE [classtype]=? GROUP BY [class];"
-        
+        sql = "SELECT [CLASS]\
+               FROM LoincTableCore\
+               WHERE [classtype]=?\
+               GROUP BY [class];"
+
         self.lstClasses.delete(0, tk.END)
-       
+
         rs = self.master.engine.read(True, sql, (self.option_id.get()+1,))
 
         if rs:
             for i in rs:
                 s = "{0}".format(i[0])
                 self.lstClasses.insert(tk.END, s)
-                
+
     def on_class_selected(self, evt=None):
 
-        sql = "SELECT [LOINC_NUM], [COMPONENT], [SHORTNAME], [SYSTEM], [PROPERTY], [CLASS], [STATUS] FROM LoincTableCore WHERE [CLASS] =? ORDER BY [COMPONENT] ASC;"
+        sql = "SELECT [LOINC_NUM],[COMPONENT],[SHORTNAME],\
+                      [SYSTEM],[PROPERTY],[CLASS],[STATUS]\
+               FROM LoincTableCore\
+               WHERE [CLASS] =?\
+               ORDER BY [COMPONENT] ASC;"
 
         if self.lstClasses.curselection():
             selected_class = self.lstClasses.get(self.lstClasses.curselection())
@@ -289,7 +294,9 @@ class Main(ttk.Frame):
             self.obj.on_open(selected_class)
 
         else:
-            messagebox.showwarning(self.master.title(), self.master.engine.no_selected, parent=self)            
+            messagebox.showwarning(self.master.title(),
+                                   self.master.engine.no_selected,
+                                   parent=self)
 
     def set_codes(self, sql, args):
 
@@ -307,7 +314,7 @@ class Main(ttk.Frame):
                 tag_config = (i[6])
 
                 self.lstItems.insert("", tk.END, iid=i[0], text=i[0],
-                                     values=(i[1], i[2], i[3], i[4], i[5] ,i[6]),
+                                     values=(i[1], i[2], i[3], i[4], i[5], i[6]),
                                      tags=tag_config)
 
         s = "{0} {1}".format("Items", len(self.lstItems.get_children()))
@@ -315,7 +322,7 @@ class Main(ttk.Frame):
         self.lblCodes["text"] = s
 
         self.master.engine.not_busy(self)
-        
+
 
     def on_item_double(self, evt):
         self.on_edit(self)
@@ -326,7 +333,7 @@ class Main(ttk.Frame):
             item_iid = self.lstItems.selection()
             pk = item_iid[0]
             self.selected_item = self.master.engine.get_selected("LoincTableCore", "LOINC_NUM", pk)
-            
+
     def on_edit(self, evt):
 
         if self.lstItems.focus():
@@ -338,28 +345,28 @@ class Main(ttk.Frame):
         else:
             messagebox.showwarning(self.master.title(),
                                    self.master.engine.no_selected,
-                                   parent=self)             
+                                   parent=self)
 
     def on_import(self, args=None):
 
         selected_file = fd.askopenfilename(title="Select file",
                                            filetypes=(("csv files", "*.csv"),
                                                       ("all files", "*.*")))
-        
+
         try:
 
             if os.path.isfile(selected_file):
 
-                self.nametowidget(".").engine.busy(self)
-                
-                p = self.nametowidget(".").engine.get_table_core(selected_file)
+                self.master.engine.busy(self)
+
+                p = self.master.engine.get_table_core(selected_file)
 
                 s = ('Exit status code:{0}'.format(p))
 
-                self.nametowidget(".").engine.not_busy(self)
+                self.master.engine.not_busy(self)
 
                 messagebox.showinfo(self.master.title(), s, parent=self)
-                
+
         except:
             s = "Houston we've had a problem here.\n{0}\nx{1}"
             msg = s.format(sys.exc_info()[1], sys.exc_info()[0])
@@ -382,20 +389,20 @@ class Main(ttk.Frame):
                             parent=self)
 
     def on_dump(self):
-        self.nametowidget(".").engine.busy(self)
+        self.master.engine.busy(self)
         self.master.engine.dump()
-        self.nametowidget(".").engine.not_busy(self)
+        self.master.engine.not_busy(self)
         messagebox.showinfo(self.master.title(), "Dump executed.", parent=self)
 
     def on_vacuum(self):
         sql = "VACUUM;"
-        self.nametowidget(".").engine.busy(self)
+        self.master.engine.busy(self)
         self.master.engine.write(sql)
-        self.nametowidget(".").engine.not_busy(self)
+        self.master.engine.not_busy(self)
         messagebox.showinfo(self.master.title(), "Vacuum executed.", parent=self)
 
     def on_log(self,):
-        self.nametowidget(".").engine.get_log_file()
+        self.master.engine.get_log_file()
 
 
 class App(tk.Tk):
@@ -413,7 +420,7 @@ class App(tk.Tk):
         self.set_info()
         w = Main(self)
         w.on_open()
-        
+
     def set_option_db(self):
         file = self.engine.get_file("optionDB")
         self.option_readfile(file)
@@ -434,7 +441,9 @@ class App(tk.Tk):
     def set_info(self,):
         msg = "{0}\nauthor: {1}\ncopyright: {2}\ncredits: {3}\nlicense: {4}\nversion: {5}\
                \nmaintainer: {6}\nemail: {7}\ndate: {8}\nstatus: {9}"
-        info = msg.format(self.title(), __author__, __copyright__, __credits__, __license__, __version__, __maintainer__, __email__, __date__, __status__)
+        info = msg.format(self.title(), __author__, __copyright__, __credits__, 
+                          __license__, __version__, __maintainer__, __email__,
+                          __date__, __status__)
         self.info = info
 
     def on_exit(self, evt=None):
@@ -449,7 +458,7 @@ def main():
     for i in sys.argv:
         args.append(i)
 
-    kwargs = {"style":"clam", "title":"The Loinc Table Core",}
+    kwargs = {"style":"clam", "title":"The Loinc Table Core"}
 
     app = App(*args, **kwargs)
 

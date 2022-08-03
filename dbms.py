@@ -11,14 +11,16 @@ import datetime
 import sqlite3 as lite
 
 class DBMS:
+    def __init__(self,):
+        self.set_connection()
    
     def __str__(self):
         return "class: {0}\nMRO: {1}".format(self.__class__.__name__,
                                              [x.__name__ for x in DBMS.__mro__],)
 
-    def set_connection(self, database):
+    def set_connection(self,):
 
-        self.con = lite.connect(database,
+        self.con = lite.connect("loinc.db",
                                 detect_types=lite.PARSE_DECLTYPES|lite.PARSE_COLNAMES,
                                 isolation_level='IMMEDIATE')
         self.con.text_factory = lite.OptimizedUnicode

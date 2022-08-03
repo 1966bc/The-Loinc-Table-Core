@@ -1,3 +1,6 @@
+[![Python 3](https://img.shields.io/badge/python-3%20-blue.svg)](https://www.python.org/downloads/)
+[![Tkinter](https://img.shields.io/badge/Tkinter%20-green.svg)](https://docs.python.org/3/library/tk.html)
+
 # The-Loinc-Table-Core
 
 ![alt tag](https://user-images.githubusercontent.com/5463566/182586570-611f1f5f-f782-4234-9138-d65913293e9c.png)

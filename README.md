@@ -34,4 +34,6 @@ make double click on a item voice tp update an existing record.
 
 To run the project, execute loinc.py
 
+Make sure you have the right files rights.
+
 enjoy yourself

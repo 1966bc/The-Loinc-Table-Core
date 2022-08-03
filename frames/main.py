@@ -139,6 +139,13 @@ class Main(ttk.Frame):
         f1.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=0)
 
         f2 = ttk.Frame(f0,)
+
+        ttk.Label(f2, text="Search:", anchor=tk.W).pack(fill=tk.X)
+
+        self.txtSearch = ttk.Entry(f2, textvariable=self.code)
+        self.txtSearch.bind("<Return>", self.on_search)
+        self.txtSearch.bind("<KP_Enter>", self.on_search)
+        self.txtSearch.pack(fill=tk.X,) 
         
         cols = (["#0", "Number", "w", True, 50, 50],
                 ["#1", "Component", "w", True, 300, 300],
@@ -159,13 +166,6 @@ class Main(ttk.Frame):
         f2.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=1)
 
         f3 = self.master.engine.get_frame(f0, )
-
-        ttk.Label(f3, text="Search:", anchor=tk.W).pack(fill=tk.X)
-
-        self.txtSearch = ttk.Entry(f3, width=6, textvariable=self.code)
-        self.txtSearch.bind("<Return>", self.on_search)
-        self.txtSearch.bind("<KP_Enter>", self.on_search)
-        self.txtSearch.pack(fill=tk.X)
 
         bts = [("Search", 0, self.on_search, "<Alt-s>"),
                ("Reset", 0, self.on_reset, "<Alt-r>"),
@@ -410,7 +410,7 @@ class App(tk.Tk):
         super().__init__()
 
         self.engine = Engine()
-        self.set_connection()
+
         self.protocol("WM_DELETE_WINDOW", self.on_exit)
         self.set_option_db()
         self.set_style(kwargs["style"])
@@ -420,9 +420,6 @@ class App(tk.Tk):
         w = Main(self)
         w.on_open()
 
-    def set_connection(self):
-        self.engine.set_connection(self.engine.get_database_name())
-        
     def set_option_db(self):
         file = self.engine.get_file("optionDB")
         self.option_readfile(file)

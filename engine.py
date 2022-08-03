@@ -19,7 +19,7 @@ from tools import Tools
 class Engine(DBMS, Importer, Tools):
     def __init__(self,):
         super().__init__()
-
+        
         self.no_selected = "Attention!\nNo record selected!"
         self.ask_to_delete = "Delete data?"
         self.ask_to_save = "Save data?"
@@ -110,6 +110,21 @@ class Engine(DBMS, Importer, Tools):
                         sys.exc_info()[1],
                         sys.exc_info()[0],
                         sys.modules[__name__])
+
+    def get_database_name(self):
+        
+        try:
+            path = self.get_file("db_name")
+            f = open(path, "r")
+            v = f.readline()
+            f.close()
+            return v
+        except FileNotFoundError:
+            self.on_log(self,
+                        inspect.stack()[0][3],
+                        sys.exc_info()[1],
+                        sys.exc_info()[0],
+                        sys.modules[__name__])            
 
     def busy(self, caller):
         caller.config(cursor="watch")

@@ -62,32 +62,38 @@ class UI(tk.Toplevel):
 
         r += 1
         ttk.Label(w, text="Property:",).grid(row=r, sticky=tk.W)
-        ttk.Entry(w, justify=tk.CENTER, width=8, textvariable=self.property).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
+        cbo = ttk.Combobox(w, values=self.get_records("PROPERTY"), textvariable=self.property)
+        cbo.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
         r += 1
         ttk.Label(w, text="Time Aspct:",).grid(row=r, sticky=tk.W)
-        ttk.Entry(w, width=8, textvariable=self.time_aspct).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
+        cbo = ttk.Combobox(w, values=self.get_records("TIME_ASPCT"), textvariable=self.time_aspct)
+        cbo.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
         r += 1
         ttk.Label(w, text="System:",).grid(row=r, sticky=tk.W)
-        ttk.Entry(w, width=8, textvariable=self.system).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
+        cbo = ttk.Combobox(w, values=self.get_records("SYSTEM"), textvariable=self.system)
+        cbo.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
         r += 1
         ttk.Label(w, text="Scale Typ:",).grid(row=r, sticky=tk.W)
-        ttk.Entry(w, width=8, textvariable=self.scale_typ).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
+        cbo = ttk.Combobox(w, values=self.get_records("SCALE_TYP"), textvariable=self.scale_typ)
+        cbo.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
         r += 1
         ttk.Label(w, text="Method Typ:",).grid(row=r, sticky=tk.W)
-        ttk.Entry(w, width=8, textvariable=self.method_typ).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
+        cbo = ttk.Combobox(w, values=self.get_records("METHOD_TYP"), textvariable=self.method_typ)
+        cbo.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
         r += 1
         ttk.Label(w, style="Mandatory.TLabel", text="Class:",).grid(row=r, sticky=tk.W)
-        self.txtClass = ttk.Entry(w, width=8, textvariable=self.class_)
-        self.txtClass.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
+        self.cbClass = ttk.Combobox(w, values=self.get_records("CLASS"), textvariable=self.class_)
+        self.cbClass.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
         r += 1
         ttk.Label(w, text="ClassType:",).grid(row=r, sticky=tk.W)
-        ttk.Entry(w, width=8, textvariable=self.class_type).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
+        cbo = ttk.Combobox(w, values=self.get_records("CLASSTYPE"), textvariable=self.class_type)
+        cbo.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
         r += 1
         ttk.Label(w, text="Long Common Name:",).grid(row=r, sticky=tk.W)
@@ -100,11 +106,11 @@ class UI(tk.Toplevel):
 
         r += 1
         ttk.Label(w, text="External Copyright Notice:",).grid(row=r, sticky=tk.W)
-        ttk.Entry(w, width=8, textvariable=self.external_copyright_notice).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
+        ttk.Entry(w, textvariable=self.external_copyright_notice).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
         r += 1
         ttk.Label(w, text="Status:",).grid(row=r, sticky=tk.W)
-        ttk.Entry(w, width=8, textvariable=self.status).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
+        ttk.Combobox(w, values=self.get_records("STATUS"), textvariable=self.status).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
         r += 1
         ttk.Label(w, text="VersionFirstReleased:",).grid(row=r, sticky=tk.W)
@@ -133,6 +139,9 @@ class UI(tk.Toplevel):
 
         self.title(msg)
 
+    def get_records(self, field):
+        sql = " SELECT DISTINCT({0}) FROM LoincTableCore ORDER BY {0} ASC;".format(field)
+        return self.master.engine.read(True, sql, ())
 
     def set_values(self,):
 
@@ -151,7 +160,6 @@ class UI(tk.Toplevel):
         self.status.set(self.selected_item[12])
         self.version_first_released.set(self.selected_item[13])
         self.version_last_changed.set(self.selected_item[14])
-
 
     def get_values(self,):
 
@@ -232,7 +240,7 @@ class UI(tk.Toplevel):
 
         dict_fields = {self.txtLoinc:"Loinc Num",
                        self.txtComponent:"Component",
-                       self.txtClass:"Class",
+                       self.cbClass:"Class",
                        self.txtShortName:"Short Name"}
 
         for k, v in dict_fields.items():

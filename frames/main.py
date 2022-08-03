@@ -132,7 +132,7 @@ class Main(ttk.Frame):
 
         f0 = self.master.engine.get_frame(self, 8)
         f1 = ttk.LabelFrame(f0, text="Classes",)
-        # lstClass
+        
         self.lstClasses = self.master.engine.get_listbox(f1,)
         self.lstClasses.bind("<<ListboxSelect>>", self.on_class_selected)
         self.lstClasses.bind("<Double-Button-1>", self.on_class_activated)
@@ -148,13 +148,13 @@ class Main(ttk.Frame):
                 ["#5", "Class", "w", True, 50, 50],
                 ["#6", "Status", "w", True, 50, 50],)
 
-        self.lblCodes = ttk.LabelFrame(f2, text="Items",)
-        self.lstItems = self.master.engine.get_tree(self.lblCodes, cols,)
+        self.lblItems = ttk.LabelFrame(f2, text="Items",)
+        self.lstItems = self.master.engine.get_tree(self.lblItems, cols,)
         for k, v in self.dict_colors.items():
             self.lstItems.tag_configure(k, background=v)
         self.lstItems.bind("<<TreeviewSelect>>", self.on_item_selected)
         self.lstItems.bind("<Double-1>", self.on_item_double)
-        self.lblCodes.pack(fill=tk.BOTH, expand=1)
+        self.lblItems.pack(fill=tk.BOTH, expand=1)
 
         f2.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=1)
 
@@ -237,7 +237,7 @@ class Main(ttk.Frame):
 
         args = tuple(self.get_sql_args())
 
-        self.set_codes(sql, args)
+        self.set_items(sql, args)
 
 
     def get_values(self,):
@@ -284,7 +284,7 @@ class Main(ttk.Frame):
             selected_class = self.lstClasses.get(self.lstClasses.curselection())
             args = (selected_class,)
             self.selected_class = selected_class
-            self.set_codes(sql, args)
+            self.set_items(sql, args)
 
     def on_class_activated(self, evt=None):
 
@@ -298,7 +298,7 @@ class Main(ttk.Frame):
                                    self.master.engine.no_selected,
                                    parent=self)
 
-    def set_codes(self, sql, args):
+    def set_items(self, sql, args):
 
         self.master.engine.busy(self)
 
@@ -319,10 +319,9 @@ class Main(ttk.Frame):
 
         s = "{0} {1}".format("Items", len(self.lstItems.get_children()))
 
-        self.lblCodes["text"] = s
+        self.lblItems["text"] = s
 
         self.master.engine.not_busy(self)
-
 
     def on_item_double(self, evt):
         self.on_edit(self)

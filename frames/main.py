@@ -410,7 +410,7 @@ class App(tk.Tk):
         super().__init__()
 
         self.engine = Engine()
-
+        self.set_connection()
         self.protocol("WM_DELETE_WINDOW", self.on_exit)
         self.set_option_db()
         self.set_style(kwargs["style"])
@@ -420,6 +420,9 @@ class App(tk.Tk):
         w = Main(self)
         w.on_open()
 
+    def set_connection(self):
+        self.engine.set_connection(self.engine.get_database_name())
+        
     def set_option_db(self):
         file = self.engine.get_file("optionDB")
         self.option_readfile(file)

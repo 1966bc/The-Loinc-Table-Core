@@ -3,7 +3,7 @@
 
 # The Loinc Table Core
 
-![alt tag](https://user-images.githubusercontent.com/5463566/182665487-a8e3c907-043a-444a-a39d-22ebd40eb834.png)
+![alt tag](https://github.com/1966bc/The-Loinc-Table-Core/issues/1)
 
 "This material contains content from LOINC (http://loinc.org). LOINC is copyright © 1995-2022, Regenstrief Institute, 
 
@@ -35,7 +35,7 @@ You can even edit or insert single record make double click on a class voice to 
 
 make double click on a item voice tp update an existing record.
 
-![alt tag](https://user-images.githubusercontent.com/5463566/182587177-cc5e433d-2559-41ff-819b-15f27358c3b0.png)
+![alt tag](https://user-images.githubusercontent.com/5463566/183281798-67a89a1f-6ada-4d82-b080-7de8c57fc1c6.png)
 
 To run the project, execute loinc.py
 

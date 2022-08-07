@@ -15,7 +15,6 @@ class UI(tk.Toplevel):
         super().__init__(name="item")
 
         self.parent = parent
-        self.set_style()
         self.index = index
         self.transient(parent)
         self.resizable(0, 0)
@@ -34,16 +33,8 @@ class UI(tk.Toplevel):
         self.status = tk.StringVar()
         self.version_first_released = tk.StringVar()
         self.version_last_changed = tk.StringVar()
-
         self.init_ui()
         self.master.engine.center_me(self)
-
-    def set_style(self):
-        s = ttk.Style()
-
-        s.configure("Mandatory.TLabel",
-                    foreground=self.master.engine.get_rgb(0, 0, 255),
-                    background=self.master.engine.get_rgb(255, 255, 255))
 
     def init_ui(self):
 
@@ -120,7 +111,16 @@ class UI(tk.Toplevel):
         ttk.Label(w, text="VersionLastChanged:",).grid(row=r, sticky=tk.W)
         ttk.Entry(w, width=8, textvariable=self.version_last_changed).grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
-        self.master.engine.get_save_cancel(self, w)
+        r = 0
+        c = 2
+        btn = ttk.Button(w, text="Save", underline=0, command=self.on_save, style='W.TButton',)
+        self.bind("<Alt-s>", self.on_save)
+        btn.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
+
+        r += 1
+        btn = ttk.Button(w, text="Cancel", underline=0, command=self.on_cancel, style='W.TButton',)
+        self.bind("<Alt-c>", self.on_cancel)
+        btn.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
     def on_open(self, selected_class, selected_item=None):
 

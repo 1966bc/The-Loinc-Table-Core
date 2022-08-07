@@ -116,13 +116,10 @@ class Main(ttk.Frame):
 
     def init_status_bar(self):
 
-        self.status = tk.Label(self,
-                               textvariable=self.status_bar_text,
-                               bd=1,
-                               fg=self.master.engine.get_rgb(0, 0, 0),
-                               bg=self.master.engine.get_rgb(240, 240, 237),
-                               relief=tk.SUNKEN,
-                               anchor=tk.W)
+        self.status = ttk.Label(self,
+                                textvariable=self.status_bar_text,
+                                style='StatusBar.TLabel',
+                                anchor=tk.W)
         self.status.pack(side=tk.BOTTOM, fill=tk.X)
 
     def init_ui(self):
@@ -130,23 +127,23 @@ class Main(ttk.Frame):
 
         self.pack(fill=tk.BOTH, expand=1)
 
-        f0 = self.master.engine.get_frame(self, 8)
-        f1 = ttk.LabelFrame(f0, text="Classes",)
-        
+        f0 = ttk.Frame(self, style='W.TFrame')
+        f1 = ttk.LabelFrame(f0, style="W.TLabelframe", text="Classes", padding=2)
+
         self.lstClasses = self.master.engine.get_listbox(f1,)
         self.lstClasses.bind("<<ListboxSelect>>", self.on_class_selected)
         self.lstClasses.bind("<Double-Button-1>", self.on_class_activated)
         f1.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=0)
 
-        f2 = ttk.Frame(f0,)
+        f2 = ttk.Frame(f0, style='W.TFrame')
 
-        ttk.Label(f2, text="Search:", anchor=tk.W).pack(fill=tk.X)
+        ttk.Label(f2, style='W.TLabel', text="Search", anchor=tk.W,).pack(fill=tk.X)
 
         self.txtSearch = ttk.Entry(f2, textvariable=self.search)
         self.txtSearch.bind("<Return>", self.on_search)
         self.txtSearch.bind("<KP_Enter>", self.on_search)
-        self.txtSearch.pack(fill=tk.X,) 
-        
+        self.txtSearch.pack(fill=tk.X,)
+
         cols = (["#0", "Number", "w", True, 80, 80],
                 ["#1", "Component", "w", True, 300, 300],
                 ["#2", "System", "w", True, 100, 100],
@@ -154,7 +151,7 @@ class Main(ttk.Frame):
                 ["#4", "Class", "w", True, 50, 50],
                 ["#5", "Status", "w", True, 50, 50],)
 
-        self.lblItems = ttk.LabelFrame(f2, text="Items",)
+        self.lblItems = ttk.LabelFrame(f2, style="W.TLabelframe", text="Items", padding=2)
         self.lstItems = self.master.engine.get_tree(self.lblItems, cols,)
         for k, v in self.dict_colors.items():
             self.lstItems.tag_configure(k, background=v)
@@ -164,15 +161,19 @@ class Main(ttk.Frame):
 
         f2.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=1)
 
-        f3 = self.master.engine.get_frame(f0, )
+        f3 = ttk.Frame(f0, style='W.TFrame')
 
         bts = [("Search", 0, self.on_search, "<Alt-s>"),
                ("Reset", 0, self.on_reset, "<Alt-r>"),
                ("Close", 0, self.parent.on_exit, "<Alt-c>")]
 
         for btn in bts:
-            self.master.engine.get_button(f3, btn[0], btn[1]).bind("<Button-1>", btn[2])
-            self.bind(btn[3], btn[2])
+            ttk.Button(f3,
+                       text=btn[0],
+                       underline=btn[1],
+                       command = btn[2],
+                       style='W.TButton',).pack(fill=tk.X, padx=5, pady=5)
+            self.parent.bind(btn[3], btn[2])
 
         self.master.engine.get_radio_buttons(f3,
                                              "Classes",
@@ -366,7 +367,7 @@ class Main(ttk.Frame):
 
                 p = self.master.engine.get_table_core(selected_file)
 
-                s = ("Exit status code:{0}\.It's OK.".format(p))
+                s = ("Exit status code:{0}n\.It's OK.".format(p))
 
                 self.master.engine.not_busy(self)
 
@@ -412,32 +413,16 @@ class Main(ttk.Frame):
 
 class App(tk.Tk):
     """Application start here"""
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         super().__init__()
 
         self.engine = Engine()
-
         self.protocol("WM_DELETE_WINDOW", self.on_exit)
-        self.set_option_db()
-        self.set_style(kwargs["style"])
-        self.set_title(kwargs["title"])
+        self.title("The Loinc Table Core")
         self.set_icon()
         self.set_info()
-        w = Main(self)
-        w.on_open()
-
-    def set_option_db(self):
-        file = self.engine.get_file("optionDB")
-        self.option_readfile(file)
-
-    def set_style(self, which):
-        self.style = ttk.Style()
-        self.style.theme_use(which)
-        self.style.configure(".", background=self.engine.get_rgb(240, 240, 237))
-
-    def set_title(self, title):
-        s = "{0}".format(title)
-        self.title(s)
+        
+        Main(self).on_open()
 
     def set_icon(self):
         icon = tk.PhotoImage(data=self.engine.get_icon("app"))
@@ -446,7 +431,7 @@ class App(tk.Tk):
     def set_info(self,):
         msg = "{0}\nauthor: {1}\ncopyright: {2}\ncredits: {3}\nlicense: {4}\nversion: {5}\
                \nmaintainer: {6}\nemail: {7}\ndate: {8}\nstatus: {9}"
-        info = msg.format(self.title(), __author__, __copyright__, __credits__, 
+        info = msg.format(self.title(), __author__, __copyright__, __credits__,
                           __license__, __version__, __maintainer__, __email__,
                           __date__, __status__)
         self.info = info
@@ -457,18 +442,9 @@ class App(tk.Tk):
             self.destroy()
 
 def main():
-    #if you want pass a number of arbitrary args or kwargs...
-    args = []
 
-    for i in sys.argv:
-        args.append(i)
-
-    kwargs = {"style":"clam", "title":"The Loinc Table Core"}
-
-    app = App(*args, **kwargs)
-
+    app = App()
     app.mainloop()
-
 
 if __name__ == "__main__":
     main()

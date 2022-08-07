@@ -18,8 +18,11 @@ from tools import Tools
 
 class Engine(DBMS, Importer, Tools):
     def __init__(self,):
-        super().__init__()
-        
+        DBMS.__init__(self)
+        Importer.__init__(self)
+        Tools.__init__(self)
+        # super(Engine, self).__init__()
+
         self.no_selected = "Attention!\nNo record selected!"
         self.ask_to_delete = "Delete data?"
         self.ask_to_save = "Save data?"
@@ -28,7 +31,7 @@ class Engine(DBMS, Importer, Tools):
     def __str__(self):
         return "class: {0}\nMRO:{1}".format(self.__class__.__name__,
                        [x.__name__ for x in Engine.__mro__])
-        
+
     def get_python_version(self,):
         return "Python version:\n{0}".format(".".join(map(str, sys.version_info[:3])))
 
@@ -85,7 +88,7 @@ class Engine(DBMS, Importer, Tools):
                         sys.modules[__name__])
 
     def get_icon(self, which):
-        
+
         try:
             path = self.get_file(which)
             f = open(path, "r")
@@ -100,7 +103,7 @@ class Engine(DBMS, Importer, Tools):
                         sys.modules[__name__])
 
     def get_log_file(self):
-        
+
         try:
             path = self.get_file("log.txt")
             self.open_file(path)
@@ -117,13 +120,13 @@ class Engine(DBMS, Importer, Tools):
 
     def not_busy(self, caller):
         caller.config(cursor="")
-        caller.update()            
+        caller.update()
 
 def main():
     #if you want testing some stuff
     foo = Engine()
     print(foo)
-    print(foo.set_connection())
+    #print(foo.set_connection())
     sql = "SELECT name FROM sqlite_master WHERE type = 'table'"
     rs = foo.read(True, sql)
     if rs:
@@ -139,10 +142,11 @@ def main():
         rs = foo.read(True, sql , ())
         for i in rs:
             print(i)
-    
+
     else:
         print("Something is gone wrong!")
-    foo.con.close()        
+    foo.con.close()
+
     input('end')
 
 if __name__ == "__main__":

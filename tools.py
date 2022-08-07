@@ -2,7 +2,7 @@
 """
 project:  general purpose
 mailto:   [giuseppecostanzi@gmail.com]
-modify:   fons 2020
+modify:   aestas MMXXI
 @author:  1966bc
 """
 import tkinter as tk
@@ -11,10 +11,58 @@ from tkinter import font
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 
+
 class Tools:
     
+    def __init__(self,):
+
+        self.set_style()
+
     def __str__(self):
         return "class: {0}".format((self.__class__.__name__, ))
+
+    def set_style(self):
+
+        self.style = ttk.Style()
+
+        self.style.theme_use("clam")
+
+        self.style.configure(".", background=self.get_rgb(240, 240, 237))
+
+        self.style.configure('W.TFrame', background=self.get_rgb(240, 240, 237))
+
+        self.style.configure('W.TButton',
+                             background=self.get_rgb(240, 240, 237),
+                             padding=5,
+                             border=1,
+                             relief=tk.RAISED,
+                             font="TkFixedFont")
+
+        self.style.configure('W.TLabel',
+                             background=self.get_rgb(240, 240, 237),
+                             padding=2,
+                             font="TkFixedFont")
+
+        self.style.configure('W.TLabelframe',
+                             background=self.get_rgb(240, 240, 237),
+                             relief=tk.GROOVE,
+                             padding=2,
+                             font="TkFixedFont")
+
+        self.style.configure('StatusBar.TLabel',
+                             background=self.get_rgb(240, 240, 237),
+                             padding=2,
+                             border=1,
+                             relief=tk.SUNKEN,
+                             font="TkFixedFont")
+
+        self.style.map('Treeview', foreground=self.fixed_map('foreground'), background=self.fixed_map('background'))
+        self.style.configure("Treeview.Heading", background=self.get_rgb(240, 240, 237), font=('TkHeadingFont', 10))
+        self.style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+
+        self.style.configure("Mandatory.TLabel",
+                             foreground=self.get_rgb(0, 0, 255),
+                             background=self.get_rgb(255, 255, 255))
 
     def get_rgb(self, r, g, b):
         """translates an rgb tuple of int to a tkinter friendly color code"""
@@ -42,48 +90,22 @@ class Tools:
         """All insert,update modules have this same configuration on init_ui.
            A Frame, a columnconfigure and a grid method.
            So, why rewrite every time?"""
-        w = self.get_frame(container)
+        w = ttk.Frame(container, style='W.TFrame')
         self.cols_configure(w)
         w.grid(row=0, column=0, sticky=tk.N+tk.W+tk.S+tk.E)
 
         return w
 
-    def get_frame(self, container, padding=None):
-
-        return ttk.Frame(container, padding=padding)
-        #return tk.Frame(container, padx=2, pady=2)
-
-    def get_buttons_frame(self, container, padding=None):
-
-        s = ttk.Style()
-        s.configure('new.TFrame', background=self.get_rgb(240, 240, 237))
-        return ttk.Frame(container,
-                         padding=padding,
-                         relief=tk.FLAT,
-                         #borderwidth=1,
-                         style='new.TFrame')
-
     def get_label_frame(self, container, text=None, padding=None):
-        #return tk.LabelFrame(container, text=text, bd=1, relief=tk.RIDGE, padx=5, pady=5,)
-        return ttk.LabelFrame(container, text=text, relief=tk.GROOVE, padding=padding)
+        return ttk.LabelFrame(container, style="W.TLabelframe", text=text, padding=padding)
 
-    def get_button(self, container, text, underline=0, row=None, col=None):
-        """button width is set in the option_db file"""
-        w = ttk.Button(container, text=text, underline=underline)
-
-        if row is not None:
-            w.grid(row=row, column=col, sticky=tk.N+tk.W+tk.E, padx=5, pady=5)
-        else:
-            w.pack(fill=tk.X, padx=5, pady=5)
-
-        return w
-
-    def get_label(self, container, text, textvariable=None, anchor=None, args=()):
+    def get_label(self, container, text, textvariable=None, anchor=None, style=None, args=()):
 
         w = ttk.Label(container,
                       text=text,
                       textvariable=textvariable,
-                      anchor=anchor)
+                      anchor=anchor,
+                      style='W.TLabel')
 
         if args:
             w.grid(row=args[0], column=args[1], sticky=args[2])
@@ -151,21 +173,19 @@ class Tools:
                        width=width,
                        background=color,
                        font='TkFixedFont',
-                       #bg="white",
-                       #fg="black",
                        yscrollcommand=sb.set,)
 
         sb.config(command=w.yview)
 
-        w.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
-        sb.pack(fill=tk.Y, expand=1)
+        w.pack(side=tk.LEFT, fill=tk.BOTH, expand=1, padx=2, pady=2)
+        sb.pack(fill=tk.Y, expand=1, padx=2, pady=2)
 
         return w
 
     def get_text_box(self, container, height=None, width=None, row=None, col=None):
 
         w = ScrolledText(container,
-                         wrap = tk.WORD,
+                         wrap=tk.WORD,
                          bg='light yellow',
                          relief=tk.GROOVE,
                          height=height,
@@ -179,96 +199,6 @@ class Tools:
             w.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
 
         return w
-
-    def get_save_cancel(self, caller, container):
-
-        #get_button(self, container, text, underline=0, row=None, col=None)
-
-        caller.btnSave = self.get_button(container, "Save", 0, 0, 2)
-        caller.btnSave.bind("<KP_Enter>", caller.on_save)
-        caller.btnSave.bind("<Button-1>", caller.on_save)
-        caller.btnSave.bind("<Return>", caller.on_save)
-
-        caller.btCancel = self.get_button(container, "Close", 0, 1, 2)
-        caller.btCancel.bind("<Button-1>", caller.on_cancel)
-
-        caller.bind("<Alt-s>", caller.on_save)
-        caller.bind("<Alt-c>", caller.on_cancel)
-
-
-    def get_dir_cancel(self, caller, container):
-
-        #get_button(self, container, text, underline=0, row=None, col=None)
-
-        caller.btnDir = self.get_button(container, "Choice", 0)
-        caller.btnDir.bind("<Button-1>", caller.on_choice_a_dir)
-        caller.btCancel = self.get_button(container, "Close", 0)
-        caller.btCancel.bind("<Button-1>", caller.on_cancel)
-
-        caller.bind("<Alt-h>", caller.on_choice_a_dir)
-        caller.bind("<Alt-c>", caller.on_cancel)
-
-           
-    def get_save_cancel_delete(self, caller, container):
-
-        #get_button(self, container, text, underline=0, row=None, col=None)
-
-        caller.btnSave = self.get_button(container, "Save", 0, 0, 2)
-        caller.btnSave.bind("<Button-1>", caller.on_save)
-        caller.btnSave.bind("<Return>", caller.on_save)
-
-        caller.btDelete = self.get_button(container, "Delete", 0, 1, 2)
-        caller.btDelete.bind("<Button-1>", caller.on_delete)
-
-        caller.btCancel = self.get_button(container, "Close", 0, 2, 2)
-        caller.btCancel.bind("<Button-1>", caller.on_cancel)
-
-        caller.bind("<Alt-s>", caller.on_save)
-        caller.bind("<Alt-d>", caller.on_delete)
-        caller.bind("<Alt-c>", caller.on_cancel)
-
-    def get_add_edit_cancel(self, caller, container):
-
-        #get_button(self, container, text, underline=0, row=None, col=None)
-
-        caller.btnAdd = self.get_button(container, "Add", 0)
-        caller.btnAdd.bind("<Return>", caller.on_add)
-        caller.btnAdd.bind("<Button-1>", caller.on_add)
-        caller.btnEdit = self.get_button(container, "Edit", 0)
-        caller.btnEdit.bind("<Button-1>", caller.on_edit)
-        caller.btCancel = self.get_button(container, "Close", 0)
-        caller.btCancel.bind("<Button-1>", caller.on_cancel)
-
-        caller.bind("<Alt-a>", caller.on_add)
-        caller.bind("<Alt-e>", caller.on_edit)
-        caller.bind("<Alt-c>", caller.on_cancel)
-
-
-    def get_add_cancel(self, parent, container):
-
-        parent.btnAdd = self.get_button(container, "Add", 0)
-        parent.btnAdd.bind("<Button-1>", parent.on_add)
-        parent.btCancel = self.get_button(container, "Close", 0)
-        parent.btCancel.bind("<Button-1>", parent.on_cancel)
-
-        parent.bind("<Alt-a>", parent.on_add)
-        parent.bind("<Alt-c>", parent.on_cancel)        
-
-    def get_save_reset_cancel(self, caller, container):
-
-        caller.btnSave = self.get_button(container, "Save", 0, 0, 2)
-        caller.btnSave.bind("<Button-1>", caller.on_save)
-        caller.btnSave.bind("<Return>", caller.on_save)
-
-        caller.btnReset = self.get_button(container, "Reset", 0, 1, 2)
-        caller.btnReset.bind("<Button-1>", caller.on_reset)
-
-        caller.btCancel = self.get_button(container, "Close", 0, 2, 2)
-        caller.btCancel.bind("<Button-1>", caller.on_cancel)
-
-        caller.bind("<Alt-s>", caller.on_save)
-        caller.bind("<Alt-r>", caller.on_reset)
-        caller.bind("<Alt-c>", caller.on_cancel)
 
 
     def on_fields_control(self, container):
@@ -293,19 +223,13 @@ class Tools:
 
         #this is a patch because with tkinter version with Tk 8.6.9 the color assignment with tags dosen't work
         #https://bugs.python.org/issue36468
-        style = ttk.Style()
-
-        style.map('Treeview', foreground=self.fixed_map('foreground'), background=self.fixed_map('background'))
-
-        style.configure("Treeview.Heading", background=self.get_rgb(240, 240, 237))
-
-        style.configure("Treeview.Heading", font=('TkHeadingFont', 10))
+        #style = ttk.Style()
 
         if size is not None:
-            style.configure("Treeview",
-                            highlightthickness=0,
-                            bd=0,
-                            font=('TkHeadingFont', size)) # Modify the font of the body
+            self.style.configure("Treeview",
+                                 highlightthickness=0,
+                                 bd=0,
+                                 font=('TkHeadingFont', size)) # Modify the font of the body
         else:
             pass
 
@@ -370,14 +294,14 @@ class Tools:
         if len(v.get()) > c:
             v.set(v.get()[:-1])
 
-    def validate_text(self,index, value_if_allowed):
-        
+    def validate_text(self, index, value_if_allowed):
+
         try:
             str(value_if_allowed)
             return True
         except ValueError:
             return False
-                 
+
 
     def validate_integer(self, action, index, value_if_allowed,
                          prior_value, text, validation_type,
@@ -434,7 +358,6 @@ class Tools:
             print(widg)
             print('\nWidget Name: {}'.format(widg.winfo_class()))
             #keys = widg.keys()
-
 
 
 def main():

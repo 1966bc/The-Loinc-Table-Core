@@ -3,7 +3,7 @@
 
 # The Loinc Table Core
 
-![alt tag](https://github.com/1966bc/The-Loinc-Table-Core/issues/1)
+![alt tag](https://user-images.githubusercontent.com/5463566/183281787-9d51f9c3-80c9-46aa-9bc8-3407552b5574.png)
 
 "This material contains content from LOINC (http://loinc.org). LOINC is copyright © 1995-2022, Regenstrief Institute, 
 

@@ -12,13 +12,9 @@ import sqlite3 as lite
 
 class DBMS:
     def __init__(self,):
-
         self.set_connection()
-
         super().__init__()
-
-       
-   
+        
     def __str__(self):
         return "class: {0}\nMRO: {1}".format(self.__class__.__name__,
                                              [x.__name__ for x in DBMS.__mro__],)
@@ -29,7 +25,6 @@ class DBMS:
                                 detect_types=lite.PARSE_DECLTYPES|lite.PARSE_COLNAMES,
                                 isolation_level='IMMEDIATE')
         self.con.text_factory = lite.OptimizedUnicode
-
 
     def read(self, fetch, sql, args=()):
 
@@ -84,7 +79,7 @@ class DBMS:
                             sys.exc_info()[1],
                             sys.exc_info()[0],
                             sys.modules[__name__])
-
+                
     def dump(self,):
 
         dt = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
@@ -133,7 +128,6 @@ class DBMS:
                             sys.exc_info()[0],
                             sys.modules[__name__])
 
-
     def get_update_sql(self, table, pk):
         """recive a table name and his pk to format an update sql statement
 
@@ -153,7 +147,6 @@ class DBMS:
         """
 
         return "INSERT INTO {0}({1})VALUES({2})".format(table, ",".join(self.get_fields(table)), ",".join("?"*n))
-
 
     def get_selected(self, table, field, *args):
         """recive table name, pk and return a dictionary

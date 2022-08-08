@@ -13,7 +13,9 @@ import subprocess
 class Importer:
     """This class is used for csv data import 
     """
-
+    def __init__(self):
+        super().__init__()        
+       
     def __str__(self):
         return "class: {0}".format(self.__class__.__name__, )
 

@@ -18,10 +18,7 @@ from tools import Tools
 
 class Engine(DBMS, Importer, Tools):
     def __init__(self,):
-        DBMS.__init__(self)
-        Importer.__init__(self)
-        Tools.__init__(self)
-        # super(Engine, self).__init__()
+        super(Engine, self).__init__()
 
         self.no_selected = "Attention!\nNo record selected!"
         self.ask_to_delete = "Delete data?"

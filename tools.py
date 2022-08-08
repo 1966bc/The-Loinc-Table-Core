@@ -18,6 +18,8 @@ class Tools:
 
         self.set_style()
 
+        super().__init__()
+
     def __str__(self):
         return "class: {0}".format((self.__class__.__name__, ))
 

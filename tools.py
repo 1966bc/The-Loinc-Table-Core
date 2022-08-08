@@ -13,11 +13,8 @@ from tkinter.scrolledtext import ScrolledText
 
 
 class Tools:
-    
     def __init__(self,):
-
         self.set_style()
-
         super().__init__()
 
     def __str__(self):
@@ -60,7 +57,7 @@ class Tools:
 
         self.style.map('Treeview', foreground=self.fixed_map('foreground'), background=self.fixed_map('background'))
         self.style.configure("Treeview.Heading", background=self.get_rgb(240, 240, 237), font=('TkHeadingFont', 10))
-        self.style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+        self.style.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})]) 
 
         self.style.configure("Mandatory.TLabel",
                              foreground=self.get_rgb(0, 0, 255),
@@ -76,7 +73,6 @@ class Tools:
         x = (container.winfo_screenwidth() - container.winfo_reqwidth()) / 2
         y = (container.winfo_screenheight() - container.winfo_reqheight()) / 2
         container.geometry("+%d+%d" % (x, y))
-
 
     def cols_configure(self, w):
 
@@ -202,7 +198,6 @@ class Tools:
 
         return w
 
-
     def on_fields_control(self, container):
 
         msg = "Please fill all fields."
@@ -304,7 +299,6 @@ class Tools:
         except ValueError:
             return False
 
-
     def validate_integer(self, action, index, value_if_allowed,
                          prior_value, text, validation_type,
                          trigger_type, widget_name):
@@ -341,7 +335,6 @@ class Tools:
 
         msg = "To do!"
         messagebox.showwarning(self.title, msg, )
-
 
     def get_widget_attributes(self, container):
         all_widgets = container.winfo_children()

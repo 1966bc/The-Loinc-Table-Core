@@ -6,16 +6,6 @@
 # modify:   aestas MMXXI
 # -----------------------------------------------------------------------------
 """ This is the main module of The Loinc Table Core."""
-import os
-import sys
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import ttk
-from tkinter import filedialog as fd
-
-import frames.license
-import frames.item as ui
-from engine import Engine
 
 __author__ = "1966bc"
 __copyright__ = "Copyleft"
@@ -28,15 +18,26 @@ __date__ = "Aestas MMXXI"
 __status__ = "production"
 __icon__ = "LOINC® logo"
 
+import os
+import sys
+import tkinter as tk
+from tkinter import messagebox
+from tkinter import ttk
+from tkinter import filedialog as fd
+
+import frames.license
+import frames.item as ui
+from engine import Engine
+
 
 class Main(ttk.Frame):
     def __init__(self, parent):
         super().__init__()
 
-        self.dict_colors = {"ACTIVE":"white",
-                            "TRIAL":"yellow",
-                            "DISCOURAGED":"orange",
-                            "DEPRECATED":"red",}
+        self.dict_colors = {"ACTIVE": "white",
+                            "TRIAL": "yellow",
+                            "DISCOURAGED": "orange",
+                            "DEPRECATED": "red",}
 
         self.parent = parent
         self.ops = ("Laboratory", "Clinical", "Claims attachments", "Surveys")
@@ -53,11 +54,9 @@ class Main(ttk.Frame):
     def init_menu(self):
 
         m_main = tk.Menu(self, bd=1)
-
         m_file = tk.Menu(m_main, tearoff=0, bd=1)
-
-        s_databases = tk.Menu(m_file)
         m_about = tk.Menu(m_main, tearoff=0, bd=1)
+        s_databases = tk.Menu(m_file)
 
         items = (("File", m_file), ("?", m_about),)
 
@@ -127,19 +126,25 @@ class Main(ttk.Frame):
 
         self.pack(fill=tk.BOTH, expand=1)
 
-        f0 = ttk.Frame(self, style='W.TFrame')
-        f1 = ttk.LabelFrame(f0, style="W.TLabelframe", text="Classes", padding=2)
+        container_frame = ttk.Frame(self, style='W.TFrame')
+        left_frame = ttk.LabelFrame(container_frame,
+                                    style="W.TLabelframe",
+                                    text="Classes",
+                                    padding=2)
 
-        self.lstClasses = self.master.engine.get_listbox(f1,)
+        self.lstClasses = self.master.engine.get_listbox(left_frame,)
         self.lstClasses.bind("<<ListboxSelect>>", self.on_class_selected)
         self.lstClasses.bind("<Double-Button-1>", self.on_class_activated)
-        f1.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=0)
 
-        f2 = ttk.Frame(f0, style='W.TFrame')
 
-        ttk.Label(f2, style='W.TLabel', text="Search", anchor=tk.W,).pack(fill=tk.X)
+        middle_frame = ttk.Frame(container_frame, style='W.TFrame')
 
-        self.txtSearch = ttk.Entry(f2, textvariable=self.search)
+        ttk.Label(middle_frame,
+                  style='W.TLabel',
+                  text="Search",
+                  anchor=tk.W,).pack(fill=tk.X)
+
+        self.txtSearch = ttk.Entry(middle_frame, textvariable=self.search)
         self.txtSearch.bind("<Return>", self.on_search)
         self.txtSearch.bind("<KP_Enter>", self.on_search)
         self.txtSearch.pack(fill=tk.X,)
@@ -151,7 +156,10 @@ class Main(ttk.Frame):
                 ["#4", "Class", "w", True, 50, 50],
                 ["#5", "Status", "w", True, 50, 50],)
 
-        self.lblItems = ttk.LabelFrame(f2, style="W.TLabelframe", text="Items", padding=2)
+        self.lblItems = ttk.LabelFrame(middle_frame,
+                                       style="W.TLabelframe",
+                                       text="Items",
+                                       padding=2)
         self.lstItems = self.master.engine.get_tree(self.lblItems, cols,)
         for k, v in self.dict_colors.items():
             self.lstItems.tag_configure(k, background=v)
@@ -159,39 +167,38 @@ class Main(ttk.Frame):
         self.lstItems.bind("<Double-1>", self.on_item_double)
         self.lblItems.pack(fill=tk.BOTH, expand=1)
 
-        f2.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=1)
-
-        f3 = ttk.Frame(f0, style='W.TFrame')
+        right_frame = ttk.Frame(container_frame, style='W.TFrame')
 
         bts = [("Search", 0, self.on_search, "<Alt-s>"),
                ("Reset", 0, self.on_reset, "<Alt-r>"),
                ("Close", 0, self.parent.on_exit, "<Alt-c>")]
 
         for btn in bts:
-            ttk.Button(f3,
+            ttk.Button(right_frame,
+                       style='W.TButton',
                        text=btn[0],
                        underline=btn[1],
-                       command = btn[2],
-                       style='W.TButton',).pack(fill=tk.X, padx=5, pady=5)
+                       command=btn[2], ).pack(fill=tk.X, padx=5, pady=5)
             self.parent.bind(btn[3], btn[2])
 
-        self.master.engine.get_radio_buttons(f3,
+        self.master.engine.get_radio_buttons(right_frame,
                                              "Classes",
                                              self.ops,
                                              self.option_id,
-                                             self.set_classes).pack(padx=5, pady=5, fill=tk.BOTH)
+                                             self.set_classes).pack(fill=tk.BOTH,
+                                                                    padx=5, pady=5)
 
-        self.master.engine.get_radio_buttons(f3,
+        self.master.engine.get_radio_buttons(right_frame,
                                              "Search type",
                                              ("Component", "Number",),
                                              self.type_id,
-                                             self.set_classes).pack(padx=5, pady=5, fill=tk.BOTH)
+                                             self.set_classes).pack(fill=tk.BOTH,
+                                                                    padx=5, pady=5)
 
-
-        f3.pack(side=tk.RIGHT, fill=tk.Y, padx=5, pady=5, expand=0)
-
-
-        f0.pack(fill=tk.BOTH, expand=1, padx=5, pady=5)
+        left_frame.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=0)
+        middle_frame.pack(side=tk.LEFT, fill=tk.BOTH, padx=5, pady=5, expand=1)
+        right_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=5, pady=5, expand=0)
+        container_frame.pack(fill=tk.BOTH, expand=1, padx=5, pady=5)
 
     def center_ui(self):
 
@@ -243,10 +250,9 @@ class Main(ttk.Frame):
 
         self.set_items(sql, args)
 
-
     def get_values(self,):
 
-        return [self.search.get(),]
+        return [self.search.get(), ]
 
     def get_sql_args(self):
 
@@ -301,6 +307,7 @@ class Main(ttk.Frame):
             messagebox.showwarning(self.master.title(),
                                    self.master.engine.no_selected,
                                    parent=self)
+
     def clear_items(self):
 
         for i in self.lstItems.get_children():
@@ -338,7 +345,9 @@ class Main(ttk.Frame):
         if self.lstItems.focus():
             item_iid = self.lstItems.selection()
             pk = item_iid[0]
-            self.selected_item = self.master.engine.get_selected("LoincTableCore", "LOINC_NUM", pk)
+            self.selected_item = self.master.engine.get_selected("LoincTableCore",
+                                                                 "LOINC_NUM",
+                                                                 pk)
 
     def on_edit(self, evt):
 
@@ -367,9 +376,14 @@ class Main(ttk.Frame):
 
                 p = self.master.engine.get_table_core(selected_file)
 
-                s = ("Exit status code:{0}n\.It's OK.".format(p))
+                if p == 0:
 
-                self.master.engine.not_busy(self)
+                    s = "The import operation has been successful.\nRetuned value:{0}".format(p)
+                else:
+                    s = "The import operation has failed.\nRetuned value:{0}".format(p)
+
+
+                self.on_reset()
 
                 messagebox.showinfo(self.master.title(), s, parent=self)
 
@@ -377,6 +391,9 @@ class Main(ttk.Frame):
             s = "Houston we've had a problem here.\n{0}\nx{1}"
             msg = s.format(sys.exc_info()[1], sys.exc_info()[0])
             messagebox.showinfo(self.master.title(), msg, parent=self)
+        finally:
+            self.master.engine.not_busy(self)
+
 
     def on_license(self):
         frames.license.UI(self).on_open()
@@ -413,16 +430,22 @@ class Main(ttk.Frame):
 
 class App(tk.Tk):
     """Application start here"""
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         super().__init__()
 
         self.engine = Engine()
         self.protocol("WM_DELETE_WINDOW", self.on_exit)
-        self.title("The Loinc Table Core")
+        self.protocol("WM_DELETE_WINDOW", self.on_exit)
+        self.engine.set_style(kwargs["theme"])
+        self.set_title(kwargs["title"])
         self.set_icon()
         self.set_info()
-        
+
         Main(self).on_open()
+
+    def set_title(self, title):
+        s = "{0}".format(title)
+        self.title(s)
 
     def set_icon(self):
         icon = tk.PhotoImage(data=self.engine.get_icon("app"))
@@ -441,10 +464,20 @@ class App(tk.Tk):
             self.engine.con.close()
             self.destroy()
 
-def main():
 
-    app = App()
+def main():
+    # if you want pass a number of arbitrary args or kwargs...
+    args = []
+
+    for i in sys.argv:
+        args.append(i)
+    # ('clam', 'alt', 'default', 'classic')
+    kwargs = {"theme": "default", "title": "The Loinc Table Core"}
+
+    app = App(*args, **kwargs)
+
     app.mainloop()
+
 
 if __name__ == "__main__":
     main()

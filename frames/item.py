@@ -113,12 +113,12 @@ class UI(tk.Toplevel):
 
         r = 0
         c = 2
-        btn = ttk.Button(w, text="Save", underline=0, command=self.on_save, style='W.TButton',)
+        btn = ttk.Button(w, style='W.TButton', text="Save", underline=0, command=self.on_save,)
         self.bind("<Alt-s>", self.on_save)
         btn.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
         r += 1
-        btn = ttk.Button(w, text="Cancel", underline=0, command=self.on_cancel, style='W.TButton',)
+        btn = ttk.Button(w, style='W.TButton', text="Cancel", underline=0, command=self.on_cancel,)
         self.bind("<Alt-c>", self.on_cancel)
         btn.grid(row=r, column=c, sticky=tk.W, padx=5, pady=5)
 
@@ -176,7 +176,7 @@ class UI(tk.Toplevel):
                 self.external_copyright_notice.get(),
                 self.status.get(),
                 self.version_first_released.get(),
-                self.version_last_changed.get(),]
+                self.version_last_changed.get(), ]
 
     def on_save(self, evt=None):
 

@@ -435,7 +435,6 @@ class App(tk.Tk):
 
         self.engine = Engine()
         self.protocol("WM_DELETE_WINDOW", self.on_exit)
-        self.protocol("WM_DELETE_WINDOW", self.on_exit)
         self.engine.set_style(kwargs["theme"])
         self.set_title(kwargs["title"])
         self.set_icon()
